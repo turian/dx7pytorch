@@ -106,7 +106,7 @@ setup(
         'Programming Language :: C++',
         'Topic :: Scientific/Engineering :: Information Analysis',
     ],
-    install_requires=['numpy','torch'],
+    install_requires=['numpy','torch', 'tqdm'],
     cmdclass={
         'build': DX7Build,
         'install': DX7Install,

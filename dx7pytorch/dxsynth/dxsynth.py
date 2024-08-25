@@ -2,6 +2,7 @@ import ctypes
 import numpy.ctypeslib as npct
 import numpy as np
 from ctypes import cdll
+from tqdm import tqdm
 
 '''
 Extracted from: https://homepages.abdn.ac.uk/d.j.benson/pages/dx7/sysex-format.txt
@@ -145,7 +146,7 @@ class dxsynth:
             velocities = np.tile(velocities,ninstances)
         
         # Call synthesizer library functions.
-        for i in range(ninstances):
+        for i in tqdm(list(range(ninstances))):
             #Reset LFOs and stop all voices.
             self.reset_synth()
             self.program_change(i)
@@ -155,6 +156,7 @@ class dxsynth:
             
             self.note_off(notes[i],velocities[i])
             self.run_synth(x[i,:],nsamples_noteon,nsamples_noteon+nsamples_noteoff)
+            #yield x[i,:], self.patch_buffer[i,:]
 
         return x
 

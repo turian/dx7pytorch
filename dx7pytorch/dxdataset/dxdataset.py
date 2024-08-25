@@ -39,7 +39,7 @@ class dxdataset(data.Dataset):
         #Instantiate Synthesizer
         self.synth = dxs.dxsynth(sampling_frequency=sample_rate)
         
-        print("dx7pytorch: FM Synthesizer for deep learning. Loading dataset . . . ")
+        print("dx7pytorch: FM Synthesizer for deep learning. Loading dataset ... ")
         
         patch_file = path.abspath(collection)
         
@@ -58,7 +58,7 @@ class dxdataset(data.Dataset):
         else:
             my_filter = self.filter_allpass
         
-        for i in range(n_patches):
+        for i in tqdm(list(range(n_patches))):
             patch = bulk_patches[i*128:(i+1)*128]
             
             # Process Patch Name. Keep only names below 128 and decide to ascii.
