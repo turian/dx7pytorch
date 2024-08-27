@@ -20,8 +20,9 @@ http://bobbyblues.recup.ch/yamaha_dx7/dx7_patches.html
 
 import numpy as np
 import os
-from os import listdir
+import glob
 from os.path import isfile, join
+from tqdm import tqdm
 import sys
 from zlib import crc32
 
@@ -43,7 +44,12 @@ def get_unique(hashlist,patches,n_similar):
 
 mypath = os.path.abspath(sys.argv[1])
 
-onlyfiles = [f for f in listdir(mypath) if isfile(join(mypath, f))]
+paths = [join(mypath, f) for f in ["*.syx", "*.SYX",  "**/*.syx", "**/*.SYX"]]
+onlyfiles = []
+for p in paths:
+    onlyfiles += list(glob.glob(p, recursive=True))
+onlyfiles = list(set(onlyfiles))
+onlyfiles = [p for p in onlyfiles if isfile(p)]
 
 print("Processing {} files. Please wait . . .".format(len(onlyfiles)))
 
@@ -52,15 +58,16 @@ hashlist = np.empty(0)
 n_total_processed = 0
 n_similar = 0
 
-for i in range(len(onlyfiles)):
-    filearray = np.fromfile(mypath + '/' + onlyfiles[i], dtype=np.uint8)
+for i in tqdm(list(range(len(onlyfiles)))):
+    filearray = np.fromfile(onlyfiles[i], dtype=np.uint8)
     #Check DX7 MK1 sysex header.
     compare = filearray[0:6] == np.array([0xF0, 0x43, 0x00, 0x09, 0x20, 0x00])
     #Check file size.
     if(len(filearray) != 4104):
-        #print("Error in file {}. Unexpected sysex header. Skipping".format(onlyfiles[i],filearray[0:6]))
+        print("Error in file %s. Wrong file length." % onlyfiles[i])
         continue
     if(compare.all() == False):
+        print("Error in file %s. Unexpected sysex header." % onlyfiles[i])
         continue
     
     hashlist,unique_patches,n_similar = get_unique(hashlist,filearray[6:4102],n_similar)

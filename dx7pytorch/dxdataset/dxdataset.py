@@ -4,6 +4,7 @@ from torch.utils import data
 import numpy as np
 from dx7pytorch import dxsynth as dxs
 from os import path
+from tqdm import tqdm
 
 class dxdataset(data.Dataset):
     """DX7 sound patch dataset."""
